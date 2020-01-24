@@ -1,1 +1,1 @@
-#Slack2Discord
+# Slack2Discord
