@@ -40,13 +40,19 @@ slackEvents.on('message',  (async function(message) {
 			var potential_channels = discord_client.channels.findAll(param, value);
 			if (potential_channels.length === 0) {
 				console.log("Error: No Discord channels with " + param + " " + value + " found.");
-				process.exit(1);
+				var server = discord_client.guilds.get('670486240918765585');
+				await server.createChannel(channel, "text");
+				var newChannel = await discord_client.channels.findAll("name", channel)[0];
+				newChannel.setParent('670713927465697283');
+				discord_channel = newChannel;
+				console.log("Created channel " + channel);
+			} else {
+				discord_channel = potential_channels[0];
 			}
 			if (potential_channels.length > 1) {
 				console.log("Warning: More than 1 Discord channel with " + param + " " + value + " found.");
 				console.log("Defaulting to first one found");
 			}
-			discord_channel = potential_channels[0];
 			console.log("Connected to channel " + channel);
 	
 			//send message
