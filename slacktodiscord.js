@@ -30,7 +30,7 @@ slackEvents.on('message',  (async function(message) {
         if (message.type == "message")
         {
 			//get info
-			var name = (await getUser(message.user)).user.name;
+			var name = (await getUser(message.user)).user.real_name;
 			var channel = (await getChannel(message.channel)).channel.name;
 			var pfp = (await getUser(message.user)).user.profile.image_72;
 			
