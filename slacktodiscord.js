@@ -89,8 +89,15 @@ slackEvents.on('message',  (async function(message) {
 						};
 
 						await discord_channel.send({ files: [file], embed: imageEmbed });
-					} else
-						await discord_channel.send({files: [message.files[i].name]});
+					} else {
+						try {
+							await discord_channel.send({files: [message.files[i].name]});
+						}
+						catch(error) {
+							console.error(error);
+						}
+					}
+					
 					//delete file
 					await del([message.files[i].name]);
 				}
