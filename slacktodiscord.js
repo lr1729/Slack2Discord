@@ -64,10 +64,10 @@ slackEvents.on('message',  (async function(message) {
 				var findtextchannel = false;
 				for(var c = 0; c < potential_channels.size && !findtextchannel; c++){
 					discord_channel = await potential_channels.get(discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).keys().next().value);
-					if(discord_channel.type == 'text')
+					if(typeof discord_channel != 'undefined' && discord_channel.type == 'text')
 						findtextchannel = true;
 				}
-			} else if (discord_channel.type != 'text'){
+			} else if (typeof discord_channel == 'undefined' || discord_channel.type != 'text'){
 				console.log("Error: No Discord channels with " + param + " " + channel + " found.");
 				var server = await discord_client.guilds.get('670486240918765585');
 				await server.createChannel(channel, "text");
