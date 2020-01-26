@@ -87,33 +87,47 @@ slackEvents.on('message',  (async function(message) {
 							"Authorization": "Bearer " + token,
 						}
 					};
-					await new Promise(resolve =>
-						request(options)
-							.pipe(fs.createWriteStream(message.files[i].name))
-							.on('finish', resolve));
-							
-					//inline images
-					if(fileext == "png" || fileext == "jpg"){
-						const file = new Discord.Attachment(message.files[i].name);
-						const imageEmbed = {
-							title: message.files[i].name,
-							image: {
-								url: 'attachment://' + message.files[i].name,
-							},
-						};
-
-						await discord_channel.send({ files: [file], embed: imageEmbed });
-					} else {
-						try {
-							await discord_channel.send({files: [message.files[i].name]});
-						}
-						catch(error) {
-							console.error(error);
-						}
-					}
 					
+					if(fileext == "mp4")
+					{
+						var linkEmbed = new Discord.RichEmbed()
+							.setAuthor(name, pfp)
+							.setTitle(message.files[i].name)
+							.setURL(message.files[i].url_private);
+						discord_channel.send(linkEmbed);
+					} else {
+						await new Promise(resolve =>
+							request(options)
+								.pipe(fs.createWriteStream('./files/' + message.files[i].name))
+								.on('finish', resolve));
+					
+						//inline images
+						if(fileext == "png" || fileext == "jpg"){
+							const file = new Discord.Attachment('./files/' + message.files[i].name);
+							const imageEmbed = {
+								title: message.files[i].name,
+								image: {
+									url: 'attachment://' + './files/' + message.files[i].name,
+								},
+							};
+							await discord_channel.send({ files: [file], embed: imageEmbed });
+						} else {
+							try {
+								await discord_channel.send({files: ['./files/' + message.files[i].name]});
+							}
+							catch(error) {
+								var linkEmbed = new Discord.RichEmbed()
+									.setAuthor(name, pfp)
+									.setTitle(message.files[i].name)
+									.setURL(message.files[i].url_private);
+								discord_channel.send(linkEmbed);
+								console.error(error);
+							}
+						}
+						
 					//delete file
-					await del([message.files[i].name]);
+					await del('./files/' + [message.files[i].name]);
+					}
 				}
 				console.log("uploaded " + message.files.length + " files");
 			}
