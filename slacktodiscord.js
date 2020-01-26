@@ -29,7 +29,6 @@ discord_client.login(DISCORD_TOKEN);
 slackEvents.on('message',  (async function(message) {
         if (message.type == "message")
         {
-			//get info
 			var name;
 			await (getUser(message.user)).then((namething) => {
 				name = namething.user.real_name;
@@ -46,35 +45,39 @@ slackEvents.on('message',  (async function(message) {
 				pfp = 'https://i.postimg.cc/CKk5xpVY/image.png';
 			});
 			
-			var channel = (await getChannel(message.channel)).channel.name;
-
 			//connect to channel
-			var param = channel !== "" ? "name" : "id";
-			var value = channel;
-			var potential_channels = discord_client.channels.findAll(param, value);
-			if (potential_channels.length === 0) {
-				console.log("Error: No Discord channels with " + param + " " + value + " found.");
-				var server = discord_client.guilds.get('670486240918765585');
+			var channel = (await getChannel(message.channel)).channel.name;
+			var param = "name"
+			var potential_channels = discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text');
+			console.log("Found " + potential_channels.size + " channels with name " + channel);
+			if (potential_channels.size === 0) {
+				console.log("Error: No Discord channels with " + param + " " + channel + " found.");
+				var server = await discord_client.guilds.get('670486240918765585');
 				await server.createChannel(channel, "text");
-				var newChannel = await discord_client.channels.findAll("name", channel)[0];
-				newChannel.setParent('670713927465697283');
+				var newChannel = await discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text').get(discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text').keys().next().value);
+				await newChannel.setParent('670713927465697283');
 				discord_channel = newChannel;
 				console.log("Created channel " + channel);
 			} else {
-				discord_channel = potential_channels[0];
+				discord_channel = await potential_channels.get(discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text').keys().next().value);
 			}
-			if (potential_channels.length > 1) {
-				console.log("Warning: More than 1 Discord channel with " + param + " " + value + " found.");
+			if (potential_channels.size > 1) {
+				console.log("Warning: More than 1 Discord channel with " + param + " " + channel + " found.");
 				console.log("Defaulting to first one found");
 			}
-			console.log("Connected to channel " + channel);
-	
+			console.log("Connected to channel " + discord_channel.name + ' (' + discord_channel.id + ')');
 			//send message
 			var textEmbed = new Discord.RichEmbed()
 				.setAuthor(name, pfp)
 				.setDescription(message.text);
-			discord_channel.send(textEmbed);
-			
+			try {
+				await discord_channel.send(textEmbed);
+			}
+			catch (error) {
+				console.log(error);
+				console.log(discord_channel);
+				console.log(typeof discord_channel.send);
+			}
 			//handle files and images
 			if("files" in message){
 				for(i = 0; i < message.files.length; i++){
@@ -94,7 +97,7 @@ slackEvents.on('message',  (async function(message) {
 							.setAuthor(name, pfp)
 							.setTitle(message.files[i].name)
 							.setURL(message.files[i].url_private);
-						discord_channel.send(linkEmbed);
+						await discord_channel.send(linkEmbed);
 					} else {
 						await new Promise(resolve =>
 							request(options)
@@ -120,7 +123,7 @@ slackEvents.on('message',  (async function(message) {
 									.setAuthor(name, pfp)
 									.setTitle(message.files[i].name)
 									.setURL(message.files[i].url_private);
-								discord_channel.send(linkEmbed);
+								await discord_channel.send(linkEmbed);
 								console.error(error);
 							}
 						}
@@ -131,7 +134,8 @@ slackEvents.on('message',  (async function(message) {
 				}
 				console.log("uploaded " + message.files.length + " files");
 			}
-        }
+			
+		}
 }));
 
 async function getUser(id){
