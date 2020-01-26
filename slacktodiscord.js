@@ -1,7 +1,7 @@
 //get tokens from enviornment variables
 const DISCORD_TOKEN         = process.env.DISCORD_TOKEN;
 const slackSigningSecret    = process.env.SLACK_SIGNING_SECRET;
-const token                 = process.env.SLACK_TOKEN; 
+const token                 = process.env.SLACK_TOKEN;
 const bottoken              = process.env.BOT_TOKEN;
 
 //deps
@@ -30,21 +30,21 @@ slackEvents.on('message',  (async function(message) {
         if (message.type == "message")
         {
 			var name;
-			await (getUser(message.user)).then((namething) => {
-				name = namething.user.real_name;
+			await (getUser(message.user)).then((nameling) => {
+				name = nameling.user.real_name;
 			}).catch((error) => {
-				name = namething.user.name;
+				name = nameling.user.name;
 			}).catch((error) => {
 				name = "Deleted User";
 			})
-			
+
 			var pfp;
-			await (getUser(message.user)).then((pfpthing) => {
-				pfp = pfpthing.user.profile.image_72;
+			await (getUser(message.user)).then((pfpling) => {
+				pfp = pfpling.user.profile.image_72;
 			}).catch((error) => {
 				pfp = 'https://i.postimg.cc/CKk5xpVY/image.png';
 			});
-			
+
 			//connect to channel
 			var channel = (await getChannel(message.channel)).channel.name;
 			var param = "name"
@@ -102,7 +102,7 @@ slackEvents.on('message',  (async function(message) {
 							"Authorization": "Bearer " + token,
 						}
 					};
-					
+
 					if(fileext == "mp4" || fileext == "mov")
 					{
 						var linkEmbed = new Discord.RichEmbed()
@@ -115,7 +115,7 @@ slackEvents.on('message',  (async function(message) {
 							request(options)
 								.pipe(fs.createWriteStream('./files/' + message.files[i].name))
 								.on('finish', resolve));
-					
+
 						//inline images
 						if(fileext == "png" || fileext == "jpg"){
 							const file = new Discord.Attachment('./files/' + message.files[i].name);
@@ -139,27 +139,27 @@ slackEvents.on('message',  (async function(message) {
 								console.error(error);
 							}
 						}
-						
+
 					//delete file
 					await del('./files/' + [message.files[i].name]);
 					}
 				}
 				console.log("uploaded " + message.files.length + " files");
 			}
-			
+
 		}
 }));
 
 async function getUser(id){
-	const thing = await web.users.info({
+	const ling = await web.users.info({
 		user: id,
 	});
-	return thing;
+	return ling;
 }
 
 async function getChannel(id){
-	const thing = await web.conversations.info({
+	const ling = await web.conversations.info({
 		channel: id,
 	});
-	return thing;
+	return ling;
 }
