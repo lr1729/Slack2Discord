@@ -88,7 +88,7 @@ slackEvents.on('message',  (async function(message) {
 						}
 					};
 					
-					if(fileext == "mp4")
+					if(fileext == "mp4" || fileext == "mov")
 					{
 						var linkEmbed = new Discord.RichEmbed()
 							.setAuthor(name, pfp)
