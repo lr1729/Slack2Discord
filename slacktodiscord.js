@@ -30,10 +30,24 @@ slackEvents.on('message',  (async function(message) {
         if (message.type == "message")
         {
 			//get info
-			var name = (await getUser(message.user)).user.real_name;
-			var channel = (await getChannel(message.channel)).channel.name;
-			var pfp = (await getUser(message.user)).user.profile.image_72;
+			var name;
+			await (getUser(message.user)).then((namething) => {
+				name = namething.user.real_name;
+			}).catch((error) => {
+				name = namething.user.name;
+			}).catch((error) => {
+				name = "Deleted User";
+			})
 			
+			var pfp;
+			await (getUser(message.user)).then((pfpthing) => {
+				pfp = pfpthing.user.profile.image_72;
+			}).catch((error) => {
+				pfp = 'https://i.postimg.cc/CKk5xpVY/image.png';
+			});
+			
+			var channel = (await getChannel(message.channel)).channel.name;
+
 			//connect to channel
 			var param = channel !== "" ? "name" : "id";
 			var value = channel;
