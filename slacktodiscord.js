@@ -30,22 +30,17 @@ slackEvents.on('message',  (async function(message) {
         if (message.type == "message")
         {
 			var name;
-			await (getUser(message.user)).then((nameling
-			) => {
-				name = nameling
-					.user.real_name;
+			await (getUser(message.user)).then((nameling) => {
+				name = nameling.user.real_name;
 			}).catch((error) => {
-				name = nameling
-					.user.name;
+				name = nameling.user.name;
 			}).catch((error) => {
 				name = "Deleted User";
 			})
 
 			var pfp;
-			await (getUser(message.user)).then((pfpling
-			) => {
-				pfp = pfpling
-					.user.profile.image_72;
+			await (getUser(message.user)).then((pfpling) => {
+				pfp = pfpling.user.profile.image_72;
 			}).catch((error) => {
 				pfp = 'https://i.postimg.cc/CKk5xpVY/image.png';
 			});
@@ -144,19 +139,15 @@ slackEvents.on('message',  (async function(message) {
 }));
 
 async function getUser(id){
-	const ling
-		= await web.users.info({
+	const ling = await web.users.info({
 		user: id,
 	});
-	return ling
-		;
+	return ling;
 }
 
 async function getChannel(id){
-	const ling
-		= await web.conversations.info({
+	const ling = await web.conversations.info({
 		channel: id,
 	});
-	return ling
-		;
+	return ling;
 }
