@@ -48,22 +48,34 @@ slackEvents.on('message',  (async function(message) {
 			//connect to channel
 			var channel = (await getChannel(message.channel)).channel.name;
 			var param = "name"
-			var potential_channels = discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text');
+			var potential_channels = discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text'));
 			console.log("Found " + potential_channels.size + " channels with name " + channel);
 			if (potential_channels.size === 0) {
 				console.log("Error: No Discord channels with " + param + " " + channel + " found.");
 				var server = await discord_client.guilds.get('670486240918765585');
 				await server.createChannel(channel, "text");
-				var newChannel = await discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text').get(discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text').keys().next().value);
+				var newChannel = await discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).get(discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).keys().next().value);
 				await newChannel.setParent('670713927465697283');
 				discord_channel = newChannel;
 				console.log("Created channel " + channel);
-			} else {
-				discord_channel = await potential_channels.get(discord_client.channels.filter(test2 => test2.name == channel && test2.type == 'text').keys().next().value);
-			}
-			if (potential_channels.size > 1) {
+			} else if (potential_channels.size > 1) {
 				console.log("Warning: More than 1 Discord channel with " + param + " " + channel + " found.");
 				console.log("Defaulting to first one found");
+				var findtextchannel = false;
+				for(var c = 0; c < potential_channels.size && !findtextchannel; c++){
+					discord_channel = await potential_channels.get(discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).keys().next().value);
+					if(discord_channel.type == 'text')
+						findtextchannel = true;
+				}
+			} else if (discord_channel.type != 'text'){
+				console.log("Error: No Discord channels with " + param + " " + channel + " found.");
+				var server = await discord_client.guilds.get('670486240918765585');
+				await server.createChannel(channel, "text");
+				var newChannel = await discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).get(discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).keys().next().value);
+				await newChannel.setParent('670713927465697283');
+				discord_channel = newChannel;
+			} else {
+				discord_channel = await potential_channels.get(discord_client.channels.filter(test2 => (test2.name == channel && test2.type == 'text')).keys().next().value);
 			}
 			console.log("Connected to channel " + discord_channel.name + ' (' + discord_channel.id + ')');
 			//send message
