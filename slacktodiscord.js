@@ -14,7 +14,7 @@ const fileExtension = require('file-extension');
 const del = require('del');
 const discord_client = new Discord.Client();
 const slackEvents = createEventAdapter(slackSigningSecret);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const request = require('request');
 
 var discord_channel;
@@ -37,7 +37,6 @@ slackEvents.on('message',  (async function(message) {
 			}).catch((error) => {
 				name = "Deleted User";
 			})
-
 			var pfp;
 			await (getUser(message.user)).then((pfpling) => {
 				pfp = pfpling.user.profile.image_72;
