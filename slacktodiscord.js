@@ -14,7 +14,7 @@ const fileExtension = require('file-extension');
 const del = require('del');
 const discord_client = new Discord.Client();
 const slackEvents = createEventAdapter(slackSigningSecret);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const request = require('request');
 
 var discord_channel;
@@ -29,13 +29,21 @@ discord_client.login(DISCORD_TOKEN);
 slackEvents.on('message',  (async function(message) {
         if (message.type == "message")
         {
-			var name = await getName(message.user);
+			var name;
+			await (getUser(message.user)).then((nameling) => {
+				name = nameling.user.real_name;
+			}).catch((error) => {
+				name = nameling.user.name;
+			}).catch((error) => {
+				name = "Deleted User";
+			})
 			var pfp;
 			await (getUser(message.user)).then((pfpling) => {
 				pfp = pfpling.user.profile.image_72;
 			}).catch((error) => {
 				pfp = 'https://i.postimg.cc/CKk5xpVY/image.png';
 			});
+
 			//connect to channel
 			var channel = (await getChannel(message.channel)).channel.name;
 			var param = "name"
@@ -58,19 +66,9 @@ slackEvents.on('message',  (async function(message) {
 			}
 			console.log("Connected to channel " + discord_channel.name + ' (' + discord_channel.id + ')');
 			//send message
-			if(/<@(.*)>/.test(message.text)){
-				var mentions = message.text.matchAll(/<@(.{8,12})>/g);
-				for (var d = 0 ; mentions.hasNext() ; d++){
-					console.log(mentions.next());
-				}
-					console.log(mentions.next());
-					console.log(mentions.size);
-					//console.log(mentions[d].substring(0, mentions[d].length - 1));
-				//}
-			}
 			var textEmbed = new Discord.RichEmbed()
 				.setAuthor(name, pfp)
-				.setDescription(message.text);
+				.setDescription(message.text.replace(/<@(.*)>/, "@" + name));
 			try {
 				await discord_channel.send(textEmbed);
 			}
@@ -138,16 +136,6 @@ slackEvents.on('message',  (async function(message) {
 
 		}
 }));
-
-async function getName(user){
-	(getUser(user)).then((nameling) => {
-		return nameling.user.real_name;
-	}).catch((error) => {
-		return "Deleted User";
-	}).catch((error) => {
-		return nameling.user.name;
-	})
-}
 
 async function getUser(id){
 	const ling = await web.users.info({
