@@ -14,7 +14,7 @@ const fileExtension = require('file-extension');
 const del = require('del');
 const discord_client = new Discord.Client();
 const slackEvents = createEventAdapter(slackSigningSecret);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const request = require('request');
 
 var discord_channel;
@@ -68,7 +68,7 @@ slackEvents.on('message',  (async function(message) {
 			//send message
 			var textEmbed = new Discord.RichEmbed()
 				.setAuthor(name, pfp)
-				.setDescription(message.text);
+				.setDescription(message.text.replace(/<@(.*)>/, "@" + name));
 			try {
 				await discord_channel.send(textEmbed);
 			}
