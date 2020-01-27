@@ -65,10 +65,31 @@ slackEvents.on('message',  (async function(message) {
 				console.log("Defaulting to first one found");
 			}
 			console.log("Connected to channel " + discord_channel.name + ' (' + discord_channel.id + ')');
+			//length of the mention string including special characters
+			const mentionLength = 12;
+			var messagetest = "";
+			var lastmention = -mentionLength;
+			for(var t = 0; t <= message.text.length - mentionLength; t++){
+				if(t + 12 <= message.text.length && message.text.substring(t, t + 2) == "<@" && message.text.substring(t + mentionLength - 1, t + mentionLength) == ">"){
+					var mentionname;
+					await (getUser(message.text.substring(t + 2, t + mentionLength - 1))).then((nameling) => {
+						mentionname = nameling.user.real_name;
+					}).catch((error) => {
+						mentionname = nameling.user.name;
+					}).catch((error) => {
+						mentionname = "Deleted User";
+					})
+					messagetest += (message.text.substring(lastmention  + mentionLength, t) + "@" + mentionname + " "); 
+					lastmention = t;
+					//console.log(message.text.substring(t + 2, t + mentionLength - 1));
+				}
+
+			} 
+			messagetest += message.text.substring(lastmention + mentionLength, message.text.length);
 			//send message
 			var textEmbed = new Discord.RichEmbed()
 				.setAuthor(name, pfp)
-				.setDescription(message.text.replace(/<@(.*)>/, "@" + name));
+				.setDescription(messagetest);
 			try {
 				await discord_channel.send(textEmbed);
 			}
@@ -136,6 +157,16 @@ slackEvents.on('message',  (async function(message) {
 
 		}
 }));
+
+async function getName(id){
+	await (getUser(id)).then((nameling) => {
+		return nameling.user.real_name;
+	}).catch((error) => {
+		return nameling.user.name;
+	}).catch((error) => {
+		return "Deleted User";
+	})
+}
 
 async function getUser(id){
 	const ling = await web.users.info({
