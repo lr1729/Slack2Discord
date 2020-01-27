@@ -4,7 +4,7 @@
   "description": "Send messages from Slack to Discord",
   "main": "slacktodiscord.js",
   "scripts": {
-    "start": "node slacktodiscord.js",
+    "start": "./start.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Team 4159",
