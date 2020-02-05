@@ -126,14 +126,19 @@ slackEvents.on('message',  (async function(message) {
 
 						//inline images
 						if(fileext == "png" || fileext == "jpg"){
-							const file = new Discord.Attachment('./files/' + message.files[i].name);
-							const imageEmbed = {
+							const attachment = new Discord.Attachment('./files/' + message.files[i].name);
+							/*const imageEmbed = {
 								title: message.files[i].name,
 								image: {
 									url: 'attachment://' + './files/' + message.files[i].name,
 								},
-							};
-							await discord_channel.send({ files: [file], embed: imageEmbed });
+							};*/
+							var imageEmbed = new Discord.RichEmbed()
+									.setAuthor(name, pfp)
+									.setTitle(message.files[i].name)
+									.attachFile(attachment)
+      									.setImage('attachment://' + './files/' + message.files[i].name);
+							await discord_channel.send(imageEmbed);
 						} else {
 							try {
 								await discord_channel.send({files: ['./files/' + message.files[i].name]});
