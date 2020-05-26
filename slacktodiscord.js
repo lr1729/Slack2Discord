@@ -2,7 +2,6 @@
 const DISCORD_TOKEN         = process.env.DISCORD_TOKEN;
 const slackSigningSecret    = process.env.SLACK_SIGNING_SECRET;
 const token                 = process.env.SLACK_TOKEN;
-const bottoken              = process.env.BOT_TOKEN;
 
 //deps
 const Discord = require('discord.js');
