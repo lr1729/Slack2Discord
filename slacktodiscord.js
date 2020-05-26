@@ -2,6 +2,8 @@
 const DISCORD_TOKEN         = process.env.DISCORD_TOKEN;
 const slackSigningSecret    = process.env.SLACK_SIGNING_SECRET;
 const token                 = process.env.SLACK_TOKEN;
+const serverId              = '670486240918765585';
+const categoryId            = '670713927465697283'
 
 //deps
 const Discord = require('discord.js');
@@ -50,10 +52,10 @@ slackEvents.on('message',  (async function(message) {
 			console.log("Found " + potential_channels.size + " channels with name " + channel);
 			if (potential_channels.size === 0) {
 				console.log("Error: No Discord channels with " + param + " " + channel + " found.");
-				var server = await discord_client.guilds.get('670486240918765585');
+				var server = await discord_client.guilds.get(serverId);
 				await server.createChannel(channel, "text");
 				var newChannel = await discord_client.channels.cache.filter(test2 => test2.name == channel).filter(test3 => test3.type == 'text').get(discord_client.cache.channels.filter(test2 => test2.name == channel).filter(test3 => test3.type == 'text').keys().next().value);
-				await newChannel.setParent('670713927465697283');
+				await newChannel.setParent(categoryId);
 				discord_channel = newChannel;
 				console.log("Created channel " + channel);
 			} else {
