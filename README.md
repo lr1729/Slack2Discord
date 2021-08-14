@@ -1,11 +1,16 @@
 # Slack2Discord
 
+
+# NOT MAINTAINED
+
+Archived in preference to https://github.com/Team4159/Slack-to-Discord-Bridge
+
 Copies Slack messages from Slack to Discord, support for images and files. Supports mutiple channels, and it will create a respective channel for each channel in Slack. This does not copy previous messages, and will only copy over new messages that are sent.
 
 ## How to run
 Git clone this repository, and run `npm install`. Create a Slack bot, and enable the events api. You will need to port forward port 3000 and set your hosting ip as the event api destination. Create a Discord bot, and add it to the server you wish to copy messages to. 
 
-Either `export` the following enviornment variables in a linux system:
+Either `export` the following enviornment variables:
 
 ```
 DISCORD_TOKEN (token for your discord bot)
